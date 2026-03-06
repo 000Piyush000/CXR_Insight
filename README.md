@@ -15,8 +15,11 @@ This project integrates computer vision and natural language processing to assis
 The application workflow:
 
 1️⃣ Upload a chest X-ray image
+
 2️⃣ Extract patient metadata from the filename
+
 3️⃣ Generate a medical-style report using Swin-T5
+
 4️⃣ Ask questions about the report using LLaMA-3.1 AI assistant
 
 Users can:
@@ -71,21 +74,35 @@ Ethnicity
 Features
 
 🔍 Automated Chest X-ray Report Generation using Swin-T5
+
 💬 AI Chat Assistant powered by LLaMA-3.1
+
 🧑‍⚕️ Patient Metadata Extraction from dataset filenames
+
 🖼 X-ray Image Visualization within the web interface
+
 📊 Medical-style structured reports
+
 🌙 Dark UI medical dashboard
+
 ⚡ Real-time interaction through Flask backend
 
 Technology ------Stack
+
 Layer	------------Technology
+
 Backend	-------------Python, Flask
+
 Frontend	-----------HTML5, CSS3, JavaScript
+
 Deep Learning	---------PyTorch, HuggingFace Transformers
+
 Vision Model	--------Swin Transformer
+
 Language Model	--------LLaMA-3.1
+
 Image Processing-------------	Torchvision, Pillow
+
 Development	----------VS Code
 Version Control	-----------Git, GitHub
 
