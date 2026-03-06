@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Chest X-ray Report</title>
+
+<style>
+
+body{
+    background:#0f1116;
+    color:white;
+    font-family:Arial;
+    margin:0;
+    padding:0;
+}
+
+.main-container{
+    border:2px solid #2b7cff;
+    margin:20px;
+    padding:20px;
+    border-radius:12px;
+}
+
+.main-title{
+    text-align:center;
+    font-size:32px;
+    margin-bottom:20px;
+    color:white;
+}
+
+.layout{
+    display:flex;
+    gap:20px;
+}
+
+/* LEFT PANEL */
+
+.left-panel{
+    width:20%;
+}
+
+.patient-box{
+    background:#1a1c23;
+    padding:15px;
+    border-radius:10px;
+}
+
+/* CENTER PANEL */
+
+.center-panel{
+    width:50%;
+}
+
+.xray-img{
+    width:100%;
+    border-radius:10px;
+}
+
+.report-box{
+    background:#1a1c23;
+    padding:15px;
+    margin-top:10px;
+    border-radius:10px;
+}
+
+/* RIGHT PANEL */
+
+.right-panel{
+    width:30%;
+}
+
+.chat-box{
+    height:300px;
+    background:#1a1c23;
+    padding:10px;
+    overflow-y:auto;
+    border-radius:10px;
+}
+
+.chat-input{
+    width:80%;
+    padding:10px;
+    margin-top:10px;
+}
+
+.chat-btn{
+    padding:10px;
+    background:#2b7cff;
+    border:none;
+    color:white;
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="main-container">
+
+<h1 class="main-title">Chest X-ray Report</h1>
+
+<div class="layout">
+
+<!-- LEFT PANEL -->
+
+<div class="left-panel">
+
+<div class="patient-box">
+
+<h3>Patient Information</h3>
+
+{% if patient_info %}
+
+<p><b>View:</b> {{patient_info.view}}</p>
+<p><b>Age:</b> {{patient_info.age}}</p>
+<p><b>Gender:</b> {{patient_info.gender}}</p>
+<p><b>Ethnicity:</b> {{patient_info.ethnicity}}</p>
+
+{% else %}
+
+<p>No patient info detected</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+<!-- CENTER PANEL -->
+
+<div class="center-panel">
+
+<h3>Uploaded Image</h3>
+
+{% if image_data %}
+
+<img src="data:image/png;base64,{{image_data}}" class="xray-img">
+
+{% endif %}
+
+
+<h3>Generated Report</h3>
+
+<div class="report-box">
+
+{% if report %}
+
+<p id="report-text">{{report}}</p>
+
+{% else %}
+
+<p>No report generated yet.</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+
+<!-- RIGHT PANEL -->
+
+<div class="right-panel">
+
+<h3>Chat about Report</h3>
+
+<div class="chat-box" id="chat-box">
+
+<p>Ask questions based on the report.</p>
+
+</div>
+
+<input type="text" id="chat-input" class="chat-input" placeholder="Type question...">
+
+<button class="chat-btn" onclick="sendQuestion()">Send</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+async function sendQuestion(){
+
+let question=document.getElementById("chat-input").value
+let report=document.getElementById("report-text").innerText
+
+let chatBox=document.getElementById("chat-box")
+
+chatBox.innerHTML += "<p><b>You:</b> "+question+"</p>"
+
+let response=await fetch("/chat",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+question:question,
+report_context:report
+
+})
+
+})
+
+let data=await response.json()
+
+chatBox.innerHTML += "<p><b>AI:</b> "+data.answer+"</p>"
+
+document.getElementById("chat-input").value=""
+
+}
+
+</script>
+
+
+</body>
+
+</html>

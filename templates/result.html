@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Upload Chest X-ray</title>
+
+<style>
+
+body{
+background:#0f1116;
+color:white;
+font-family:Arial;
+}
+
+.container{
+
+border:2px solid #2b7cff;
+border-radius:12px;
+width:500px;
+margin:100px auto;
+padding:30px;
+text-align:center;
+
+}
+
+h1{
+color:white;
+}
+
+input[type=file]{
+
+margin:20px 0;
+color:white;
+
+}
+
+button{
+
+background:#2b7cff;
+border:none;
+padding:12px 20px;
+color:white;
+cursor:pointer;
+border-radius:6px;
+
+}
+
+button:hover{
+
+background:#1a5edb;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+<h1>Upload Chest X-ray</h1>
+
+<form action="/predict" method="POST" enctype="multipart/form-data">
+
+<input type="file" name="image" required>
+
+<br>
+
+<label>Max Report Length</label>
+
+<br>
+
+<input type="number" name="max_length" value="100" min="10" max="512">
+
+<br><br>
+
+<input type="hidden" name="vlm_choice" value="swin_t5_chexpert">
+
+<button type="submit">Generate Report</button>
+
+</form>
+
+</div>
+
+</body>
+
+</html>

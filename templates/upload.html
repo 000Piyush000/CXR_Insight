@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Chest X-ray Report</title>
+
+<style>
+
+body{
+
+background:#0f1116;
+color:white;
+font-family:Arial;
+
+}
+
+.main-container{
+
+border:2px solid #2b7cff;
+margin:20px;
+padding:20px;
+border-radius:12px;
+
+}
+
+.layout{
+
+display:flex;
+gap:20px;
+
+}
+
+.left{
+
+width:20%;
+
+}
+
+.center{
+
+width:50%;
+
+}
+
+.right{
+
+width:30%;
+
+}
+
+.box{
+
+background:#1a1c23;
+padding:15px;
+border-radius:10px;
+
+}
+
+img{
+
+width:100%;
+border-radius:10px;
+
+}
+
+.chat-box{
+
+height:300px;
+overflow-y:auto;
+background:#1a1c23;
+padding:10px;
+border-radius:10px;
+
+}
+
+input{
+
+padding:10px;
+margin-top:10px;
+width:80%;
+
+}
+
+button{
+
+padding:10px;
+background:#2b7cff;
+border:none;
+color:white;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="main-container">
+
+<h1 style="text-align:center;">Chest X-ray Report</h1>
+
+<div class="layout">
+
+<!-- Patient info -->
+
+<div class="left">
+
+<div class="box">
+
+<h3>Patient Information</h3>
+
+{% if patient_info %}
+
+<p>View: {{patient_info.view}}</p>
+<p>Age: {{patient_info.age}}</p>
+<p>Gender: {{patient_info.gender}}</p>
+<p>Ethnicity: {{patient_info.ethnicity}}</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+<!-- Image + report -->
+
+<div class="center">
+
+<h3>Uploaded Image</h3>
+
+<img src="data:image/png;base64,{{image_data}}">
+
+<h3>Generated Report</h3>
+
+<div class="box">
+
+<p id="report-text">{{report}}</p>
+
+</div>
+
+</div>
+
+
+<!-- Chat -->
+
+<div class="right">
+
+<h3>Chat about Report</h3>
+
+<div class="chat-box" id="chat-box"></div>
+
+<input type="text" id="question" placeholder="Ask about report">
+
+<button onclick="sendQuestion()">Send</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+async function sendQuestion(){
+
+let question=document.getElementById("question").value
+let report=document.getElementById("report-text").innerText
+
+let chatBox=document.getElementById("chat-box")
+
+chatBox.innerHTML+="<p><b>You:</b> "+question+"</p>"
+
+let response=await fetch("/chat",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+question:question,
+report_context:report
+
+})
+
+})
+
+let data=await response.json()
+
+chatBox.innerHTML+="<p><b>AI:</b> "+data.answer+"</p>"
+
+}
+
+</script>
+
+</body>
+
+</html>
