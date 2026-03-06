@@ -4,6 +4,8 @@ A modular AI-powered web application that generates radiology-style reports from
 
 The system allows medical students and practitioners to upload X-ray images, generate automated reports, and interact with an AI assistant to understand the results.
 
+![Uploading image.png…]()
+
 
 Overview
 
