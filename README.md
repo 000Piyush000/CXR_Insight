@@ -1,4 +1,4 @@
-#**CXR Insight – Chest X-ray Report Generation & AI Assistant**
+# **CXR Insight – Chest X-ray Report Generation & AI Assistant**
 
 A modular AI-powered web application that generates radiology-style reports from chest X-ray images using Vision-Language Models (VLMs) and provides interactive explanations through a Large Language Model (LLM).
 
