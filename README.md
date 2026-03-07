@@ -104,5 +104,6 @@ Language Model	--------LLaMA-3.1
 Image Processing-------------	Torchvision, Pillow
 
 Development	----------VS Code
+
 Version Control	-----------Git, GitHub
 
