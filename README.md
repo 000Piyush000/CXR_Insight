@@ -87,9 +87,9 @@ Features
 
 ⚡ Real-time interaction through Flask backend
 
-Technology ------Stack
 
-Layer	------------Technology
+
+## Layer	------------Technology
 
 Backend	-------------Python, Flask
 
