@@ -34,6 +34,9 @@ View patient metadata extracted from the dataset filename
 
 Interact with the system through a clean medical-style interface
 
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/93018d71-faf8-4eba-855e-cdbc86701f4f" />
+
+
 
 Vision-Language Model (VLM)
 
