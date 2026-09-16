@@ -1,0 +1,25 @@
+__pycache__/
+*.pyc
+.env
+venv/
+.venv/
+*.egg-info/
+
+# Model weights (large binary files - download separately, see scripts/setup_models.py)
+checkpoints/
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# Runtime data
+uploads/*
+!uploads/.gitkeep
+reports/*
+!reports/.gitkeep
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

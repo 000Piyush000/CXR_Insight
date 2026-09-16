@@ -1,8 +1,15 @@
-Flask>=2.0
-torch>=1.8
-torchvision>=0.9
-transformers>=4.10
-Pillow>=8.0
-sentencepiece>=0.1.90 # Often needed by T5Tokenizer
-tqdm # Was used in original script, optional for webapp but good practice if model loading is slow
-python-dotenv  # To handle the HF token
+torch>=2.1.0
+torchvision>=0.16.0
+transformers>=4.42.0
+accelerate>=0.31.0
+sentencepiece>=0.1.99
+huggingface-hub>=0.23.0
+Flask>=3.0.0
+Flask-Cors>=4.0.0
+Pillow>=10.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+python-dotenv>=1.0.0
+bitsandbytes>=0.43.0 ; platform_system == "Linux"
+werkzeug>=3.0.0
+tqdm>=4.66.0

@@ -1,230 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<title>Chest X-ray Report</title>
-
-<style>
-
-body{
-    background:#0f1116;
-    color:white;
-    font-family:Arial;
-    margin:0;
-    padding:0;
-}
-
-.main-container{
-    border:2px solid #2b7cff;
-    margin:20px;
-    padding:20px;
-    border-radius:12px;
-}
-
-.main-title{
-    text-align:center;
-    font-size:32px;
-    margin-bottom:20px;
-    color:white;
-}
-
-.layout{
-    display:flex;
-    gap:20px;
-}
-
-/* LEFT PANEL */
-
-.left-panel{
-    width:20%;
-}
-
-.patient-box{
-    background:#1a1c23;
-    padding:15px;
-    border-radius:10px;
-}
-
-/* CENTER PANEL */
-
-.center-panel{
-    width:50%;
-}
-
-.xray-img{
-    width:100%;
-    border-radius:10px;
-}
-
-.report-box{
-    background:#1a1c23;
-    padding:15px;
-    margin-top:10px;
-    border-radius:10px;
-}
-
-/* RIGHT PANEL */
-
-.right-panel{
-    width:30%;
-}
-
-.chat-box{
-    height:300px;
-    background:#1a1c23;
-    padding:10px;
-    overflow-y:auto;
-    border-radius:10px;
-}
-
-.chat-input{
-    width:80%;
-    padding:10px;
-    margin-top:10px;
-}
-
-.chat-btn{
-    padding:10px;
-    background:#2b7cff;
-    border:none;
-    color:white;
-    cursor:pointer;
-}
-
-</style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CXR Insight</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
-
-
 <body>
-
-<div class="main-container">
-
-<h1 class="main-title">Chest X-ray Report</h1>
-
-<div class="layout">
-
-<!-- LEFT PANEL -->
-
-<div class="left-panel">
-
-<div class="patient-box">
-
-<h3>Patient Information</h3>
-
-{% if patient_info %}
-
-<p><b>View:</b> {{patient_info.view}}</p>
-<p><b>Age:</b> {{patient_info.age}}</p>
-<p><b>Gender:</b> {{patient_info.gender}}</p>
-<p><b>Ethnicity:</b> {{patient_info.ethnicity}}</p>
-
-{% else %}
-
-<p>No patient info detected</p>
-
-{% endif %}
-
-</div>
-
-</div>
-
-
-<!-- CENTER PANEL -->
-
-<div class="center-panel">
-
-<h3>Uploaded Image</h3>
-
-{% if image_data %}
-
-<img src="data:image/png;base64,{{image_data}}" class="xray-img">
-
-{% endif %}
-
-
-<h3>Generated Report</h3>
-
-<div class="report-box">
-
-{% if report %}
-
-<p id="report-text">{{report}}</p>
-
-{% else %}
-
-<p>No report generated yet.</p>
-
-{% endif %}
-
-</div>
-
-</div>
-
-
-
-<!-- RIGHT PANEL -->
-
-<div class="right-panel">
-
-<h3>Chat about Report</h3>
-
-<div class="chat-box" id="chat-box">
-
-<p>Ask questions based on the report.</p>
-
-</div>
-
-<input type="text" id="chat-input" class="chat-input" placeholder="Type question...">
-
-<button class="chat-btn" onclick="sendQuestion()">Send</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-async function sendQuestion(){
-
-let question=document.getElementById("chat-input").value
-let report=document.getElementById("report-text").innerText
-
-let chatBox=document.getElementById("chat-box")
-
-chatBox.innerHTML += "<p><b>You:</b> "+question+"</p>"
-
-let response=await fetch("/chat",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-question:question,
-report_context:report
-
-})
-
-})
-
-let data=await response.json()
-
-chatBox.innerHTML += "<p><b>AI:</b> "+data.answer+"</p>"
-
-document.getElementById("chat-input").value=""
-
-}
-
-</script>
-
-
+  <header>
+    <div class="badges">
+      <span class="badge {{ 'live' if vlm_mode == 'swin-t5' else 'demo' }}">VLM: {{ vlm_mode }}</span>
+      <span class="badge {{ 'live' if llm_mode == 'llama-3.1' else 'demo' }}">LLM: {{ llm_mode }}</span>
+    </div>
+    <p class="brand-name">CXR_Insights</p>
+    <h1>Chest X-ray Report Generation</h1>
+    <div class="title-underline"></div>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT COLUMN -->
+    <section class="col col-left">
+      <div class="panel" id="patient-panel">
+        <div class="panel-head"><span class="icon">🗂️</span><h2>Patient Information</h2></div>
+        <ul class="patient-list" id="patient-list" hidden>
+          <li>Patient ID: <strong id="meta-patient">-</strong></li>
+          <li>View: <strong id="meta-view">-</strong></li>
+          <li>Age: <strong id="meta-age">-</strong></li>
+          <li>Gender: <strong id="meta-gender">-</strong></li>
+          <li>Ethnicity: <strong id="meta-ethnicity">-</strong></li>
+        </ul>
+        <p class="placeholder-note" id="patient-placeholder">Upload an X-ray to see patient metadata.</p>
+      </div>
+
+      <div class="panel" id="chat-panel">
+        <div class="panel-head"><span class="icon">💬</span><h2>Chat about Report</h2></div>
+        <div class="chat-window" id="chat-window">
+          <div class="msg system">Welcome! Ask me about the findings, impression, or specific details in the report once it's generated.</div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Type your question..." disabled />
+          <button id="chat-send" class="send-btn" disabled aria-label="Send">&#9658;</button>
+        </div>
+        <div class="example-questions" id="example-questions">
+          <span class="tags-label">Example Questions:</span>
+          <div class="tags-row">
+            <button class="chip-btn" data-q="What are the main findings?">What are the main findings?</button>
+            <button class="chip-btn" data-q="Summarize the impression">Summarize the impression</button>
+            <button class="chip-btn" data-q="Are there any tubes or lines mentioned?">Are there any tubes or lines mentioned?</button>
+            <button class="chip-btn" data-q="Is the heart size normal?">Is the heart size normal?</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CENTER COLUMN -->
+    <section class="col col-center">
+      <div class="panel" id="image-panel">
+        <div class="panel-head"><span class="icon">🖼️</span><h2>Chest X-ray</h2></div>
+
+        <div class="dropzone" id="dropzone">
+          <p>Drag &amp; drop an image here, or click to browse</p>
+          <p class="dropzone-hint">PNG, JPG, JPEG, BMP &middot; up to 25MB</p>
+          <input type="file" id="file-input" accept=".png,.jpg,.jpeg,.bmp,.dcm" />
+        </div>
+
+        <div class="image-frame" id="image-frame" hidden>
+          <div class="image-frame-top">
+            <span class="hint-small">Uploaded X-ray</span>
+            <button class="link-btn" id="reset-btn">Change Image</button>
+          </div>
+          <div class="image-zoom-wrap">
+            <img id="preview-img" alt="X-ray preview" />
+            <span class="view-badge" id="view-badge"></span>
+            <div class="findings-overlay" id="findings-overlay" hidden></div>
+          </div>
+          <p class="hint-text">Hover over image to zoom (on desktop).</p>
+          <div class="image-actions">
+            <button id="generate-btn">Generate Report</button>
+          </div>
+        </div>
+
+        <div class="error-text" id="upload-error"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN -->
+    <section class="col col-right">
+      <div class="panel" id="report-panel">
+        <div class="panel-head"><span class="icon">📄</span><h2>Generated Report</h2></div>
+
+        <div id="report-placeholder" class="placeholder">Upload an image and click "Generate Report" to see results here.</div>
+
+        <div id="report-sections" hidden>
+          <div class="report-mode-note" id="report-mode-note"></div>
+
+          <h3>Findings</h3>
+          <p id="findings-text"></p>
+
+          <h3 id="impression-heading" hidden>Impression</h3>
+          <p id="impression-text"></p>
+
+          <details class="raw-report" id="raw-report" hidden>
+            <summary>View full report text</summary>
+            <pre id="report-box"></pre>
+          </details>
+        </div>
+
+        <div class="findings-tags" id="found-tags" hidden>
+          <span class="tags-label">Detected findings (click to search the web):</span>
+          <div class="tags-row" id="tags-row-found"></div>
+        </div>
+
+        <div class="findings-tags ruled-out" id="ruledout-tags" hidden>
+          <span class="tags-label">Not seen / ruled out:</span>
+          <div class="tags-row" id="tags-row-ruledout"></div>
+        </div>
+
+        <div class="web-search-box">
+          <label for="disease-search-input">Search a condition on the web</label>
+          <div class="search-row">
+            <input type="text" id="disease-search-input" placeholder="e.g. pleural effusion" />
+            <button id="disease-search-btn">Search</button>
+          </div>
+        </div>
+
+        <button id="download-btn" class="download-btn" disabled>&#8681; Download Report</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
-
 </html>
